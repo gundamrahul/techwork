@@ -33,13 +33,13 @@ jobs:
         pip3 install ansible[azure] -I
         pip3 install -r requirements-azure.txt -
         ansible-galaxy collection install azure.azcollection==1.19 
-        sudo pip3 install msrest -I 
-        sudo pip3 install msrestazure -I
+        pip3 install msrest -I 
+        pip3 install msrestazure -I
         
 
     - name: Run Ansible Playbook
       run: |
-        ansible-playbook -i ansible/inventory.ini ansible/create_resourceGroup.yml -vvv
+        ansible-playbook -i ansible/inventory.ini ansible/create_resourceGroup.yml
       env:
         AZURE_AD_CLIENT_ID: a8ebd85b-dbf0-4cac-a4bf-eb3aa0bbe195
         AZURE_AD_SECRET: uSl8Q~Nc7pdu87ic6BxP~ehjntN4Vkevb~sdNczK
