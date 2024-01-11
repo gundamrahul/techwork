@@ -23,6 +23,10 @@ jobs:
         python -m pip install --upgrade pip
         pip3 install ansible
         pip install --upgrade ansible
+        
+    - name: Get Ansible Version
+      run: |
+        ansible-playbook --version 
 
     - name: configure Ansible
       run: |
