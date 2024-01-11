@@ -26,7 +26,7 @@ jobs:
     - name: configure Ansible
       run: |
         pip install ansible[azure] -I
-        pip install -r /usr/lib/python3/dist-packages/ansible_collections/azure/azcollection/requirements-azure.txt -I  
+        pip install -r requirements-azure.txt -I  
         ansible-galaxy collection install azure.azcollection==1.19
 
     - name: Run Ansible Playbook
