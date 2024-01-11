@@ -22,7 +22,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip3 install ansible
-        pip install --upgrade ansible
+        pip3 install --upgrade ansible
 
     - name: Get Ansible Version
       run: |
@@ -30,12 +30,11 @@ jobs:
 
     - name: configure Ansible
       run: |
-        pip install azure
         pip3 install ansible[azure] -I
         pip3 install -r requirements-azure.txt -
         ansible-galaxy collection install azure.azcollection==1.19 
-        pip3 install msrest -I 
-        pip3 install msrestazure -I
+        sudo pip3 install msrest -I 
+        sudo pip3 install msrestazure -I
         
 
     - name: Run Ansible Playbook
