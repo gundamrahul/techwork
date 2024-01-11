@@ -30,6 +30,7 @@ jobs:
 
     - name: configure Ansible
       run: |
+        pip install azure
         pip3 install ansible[azure] -I
         pip3 install -r requirements-azure.txt -
         ansible-galaxy collection install azure.azcollection==1.19 
