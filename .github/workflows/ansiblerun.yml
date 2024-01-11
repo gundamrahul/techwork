@@ -35,7 +35,11 @@ jobs:
         ansible-galaxy collection install azure.azcollection==1.19 
         pip3 install msrest -I
         pip3 install msrestazure -I
-        
+      
+    - name: Configure Az Environment   
+      run: |
+        mkdir $HOME/.azure
+        cp credentials $HOME/.azure/
 
     - name: Run Ansible Playbook
       run: |
