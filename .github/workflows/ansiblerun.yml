@@ -1,0 +1,38 @@
+name: Azure AD Group Deployment
+
+on:
+  push:
+    branches:
+      - main # or your preferred branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install Ansible
+      run: |
+        python -m pip install --upgrade pip
+        pip install ansible
+
+    - name: configure Ansible
+      run: |
+        pip install ansible[azure] -I
+        pip install -r /usr/lib/python3/dist-packages/ansible_collections/azure/azcollection/requirements-azure.txt -I  
+        ansible-galaxy collection install azure.azcollection==1.19
+
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook -i ansible/inventory.ini ansible/create_resourceGroup.yml
+      env:
+        AZURE_AD_CLIENT_ID: a8ebd85b-dbf0-4cac-a4bf-eb3aa0bbe195
+        AZURE_AD_SECRET: uSl8Q~Nc7pdu87ic6BxP~ehjntN4Vkevb~sdNczK
+        AZURE_AD_TENANT_ID: df49ebf2-2fd2-44c2-80f8-37058cc147b9

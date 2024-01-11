@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  collections:
+    - azure.azcollection
+  tasks:
+    - name: create az groups in WW Subscription
+      azure_rm_resourcegroup:
+        name: "demo-App_ansible_RG"
+        location: "eastus"
