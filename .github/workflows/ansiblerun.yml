@@ -21,13 +21,13 @@ jobs:
     - name: Install Ansible
       run: |
         python -m pip install --upgrade pip
-        pip install ansible
+        pip3 install ansible
 
     - name: configure Ansible
       run: |
-        pip install msrestazure
-        pip install ansible[azure] -I
-        pip install -r requirements-azure.txt -I  
+        pip3 install msrestazure
+        pip3 install ansible[azure] -I
+        pip3 install -r requirements-azure.txt -I  
         ansible-galaxy collection install azure.azcollection==1.19
 
     - name: Run Ansible Playbook
