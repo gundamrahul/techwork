@@ -10,9 +10,9 @@
 
 - name: Creating Azure AD Security Group {{ AllAdmingroupcreate }}
   azure_rm_adgroup:
-    tenant: "{{ tenant_id }}"
-    display_name: "{{ AllAdmingroupcreate }}"
-    mail_nickname: "{{ AllAdmingroupcreate }}"
+    tenant: {{ tenant_id }}
+    display_name: {{ AllAdmingroupcreate }}
+    mail_nickname: {{ AllAdmingroupcreate }}
     state: 'present'
   register: AllAdmingroupcreate_result
 
