@@ -113,7 +113,7 @@
     include_tasks: add_az_user_ad_group_member.yml
     vars:
       azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
-      user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environmentfullname }}@rgtechlabsoutlook.onmicrosoft.com"
+      user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environment }}@rgtechlabsoutlook.onmicrosoft.com"
       tenant_id: "{{ tenant_id }}" 
 
 ###################### ONLY AFTER EVERYTHING RUNS IN THE DATAOPS SIDE CAR REPO ###########################
