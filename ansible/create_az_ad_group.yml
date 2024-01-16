@@ -9,8 +9,8 @@
   # tasks:
 
 - name: Creating Azure AD Security Group {{ AllAdmingroupcreate }}
-  azure.azcollection.azure_rm_adgroup:
-    tenant: "{{tenant_id}}"
+  azure_rm_adgroup:
+    tenant: "{{ tenant_id }}"
     display_name: "{{ AllAdmingroupcreate }}"
     mail_nickname: "{{ AllAdmingroupcreate }}"
     state: 'present'

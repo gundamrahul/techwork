@@ -1,39 +1,39 @@
-- hosts: localhost
-  gather_facts: false
-  connection: local
-  collections:
-    - azure.azcollection
+# - hosts: localhost
+#   gather_facts: false
+#   connection: local
+#   collections:
+#     - azure.azcollection
+#   vars:
+#     azure_tenant: "{{ lookup('env','AZURE_TENANT_ID') }}"
+#     azure_client_id: "{{ lookup('env','AZURE_CLIENT_ID') }}"
+#     azure_secret: "{{ lookup('env','AZURE_CLIENT_SECRET') }}"
+#     tenant_id: "{{tenant_id}}"
+#     azgroupName: "{{ azgroupName }}"
+#     user_emailId: "{{ user_emailId }}"
+
+  # tasks:
+- name: Using user_principal_name
+  azure.azcollection.azure_rm_aduser_info:
+    user_principal_name: "{{ user_emailId }}"
+    tenant: "{{ tenant_id }}"
+  register: sp_result
+
+- name: Display User_ObjectID
+  debug: msg="{{ sp_result | json_query(jmesquery) }}"
   vars:
-    azure_tenant: "{{ lookup('env','AZURE_TENANT_ID') }}"
-    azure_client_id: "{{ lookup('env','AZURE_CLIENT_ID') }}"
-    azure_secret: "{{ lookup('env','AZURE_CLIENT_SECRET') }}"
-    tenant_id: "{{tenant_id}}"
-    azgroupName: "{{ azgroupName }}"
-    user_emailId: "{{ user_emailId }}"
+    jmesquery: "ad_users[*].object_id"
+  register: Userobjectid_result
 
-  tasks:
-  - name: Using user_principal_name
-    azure.azcollection.azure_rm_aduser_info:
-      user_principal_name: "{{ user_emailId }}"
-      tenant: "{{ tenant_id }}"
-    register: sp_result
+- debug: msg="{{Userobjectid_result.msg[0]}}"
 
-  - name: Display User_ObjectID
-    debug: msg="{{ sp_result | json_query(jmesquery) }}"
-    vars:
-     jmesquery: "ad_users[*].object_id"
-    register: Userobjectid_result
+- name: Adding User - {{ user_emailId }} as a memeber to Group -  {{ azgroupName }}
+  azure_rm_adgroup:
+    tenant: "{{ tenant_id }}"
+    display_name: "{{ azgroupName }}"
+    mail_nickname: "{{ azgroupName }}"
+    state: 'present'
+    present_members:
+      - "https://graph.windows.net/{{tenant_id}}/directoryObjects/{{Userobjectid_result.msg[0]}}"
+  register: azgroup_result
 
-  - debug: msg="{{Userobjectid_result.msg[0]}}"
-
-  - name: Adding User - {{ user_emailId }} as a memeber to Group -  {{ azgroupName }}
-    azure_rm_adgroup:
-      tenant: "{{ tenant_id }}"
-      display_name: "{{ azgroupName }}"
-      mail_nickname: "{{ azgroupName }}"
-      state: 'present'
-      present_members:
-        - "https://graph.windows.net/{{tenant_id}}/directoryObjects/{{Userobjectid_result.msg[0]}}"
-    register: azgroup_result
-
-  - debug: msg="{{azgroup_result}}"
+- debug: msg="{{azgroup_result}}"
