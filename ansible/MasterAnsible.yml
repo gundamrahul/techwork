@@ -1,0 +1,132 @@
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - azure.azcollection
+  vars:
+    azure_subscription_id: "0fe0f1b2-5343-4344-8166-8ea779cb52df"
+    azure_client_id: "9d9fd7e6-2362-4080-9d84-dbc9136bfbc3"
+    azure_secret: "xO88Q~BwEYyWjJA0UYQoAMgZeXoCjfPMnB.qIc7C"
+    tenant_id: "df49ebf2-2fd2-44c2-80f8-37058cc147b9"
+    app_display_name: "{{ app_display_name}}"
+    Environment: "{{Environment}}"
+    FunctionalArea: "{{FunctionalArea}}"
+    dataproduct: "SERVICEMANAGEMENT"
+    
+  tasks:
+  - name: Checking if it is a Dev Environment...
+    set_fact:
+      EnvironmentValid: "D"
+      Environmentfullname: "NONPROD"
+    when: Environment | lower == 'dev' 
+
+  - name: Checking if it is a Test Environment...
+    set_fact:
+      EnvironmentValid: "T"
+      Environmentfullname: "NONPROD"
+    when: Environment | lower == 'tst'
+  
+  - name: Checking if it is QA Environment...
+    set_fact:
+      EnvironmentValid: "Q"
+      Environmentfullname: "NONPROD"
+    when: Environment | lower == 'qa'
+  
+  - name: Checking if it is a prod Environment...
+    set_fact:
+      EnvironmentValid: "P"
+      Environmentfullname: "PROD"
+    when: Environment | lower == 'prod'
+
+  - name: Fail if not recognized Environment
+    fail:
+      msg: "Execution stopped because Environment is not a recognized Environment."
+    when: Environment | lower not in ['dev', 'tst', 'qa', 'prod']
+
+    # Create Admin All Group
+  - name: Create the AZ Admin group All  
+    include_tasks: create_az_ad_group.yml
+    vars:
+      AllAdmingroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      tenant_id: "{{tenant_id}}"
+
+    # Create Developer All Group
+  - name: Create the AZ Developers group All 
+    include_tasks: create_az_ad_group.yml
+    vars:
+      AllDevelopersgroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      tenant_id: "{{tenant_id}}"
+
+    # Create Environment Admin Group
+  - name: Creating the AD group-  Environment Admin.
+    include_tasks: create_az_ad_group.yml
+    vars:
+      AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      tenant_id: "{{tenant_id}}"  
+
+    # Create Environment Developer Group
+  - name: Creating the AD group-  Environment Developers.
+    include_tasks: create_az_ad_group.yml
+    vars:
+      AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      tenant_id: "{{tenant_id}}"           
+
+  # Add  Admin All Group to Environment Admin Group
+  - name: add All group to specific Environment group admins
+    include_tasks: add_az_group_ad_group_member.yml 
+    vars:
+      azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      memberGroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      tenant_id: "{{tenant_id}}" 
+
+  # Add  Admin All Group to Environment Developers Group
+  - name: add All group to specific Environment group Developers
+    include_tasks: add_az_group_ad_group_member.yml 
+    vars:
+      azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      memberGroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      tenant_id: "{{tenant_id}}" 
+
+  # Add Admin User to Environment Admin Group
+  - name: Add Admin User to Admin All Group
+    include_tasks: add_az_user_ad_group_member.yml
+    vars:
+      azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      user_emailId: "harish@rgtechlabsoutlook.onmicrosoft.com"
+      tenant_id: "{{tenant_id}}" 
+
+  # Add Developer User to Environment Developer Group
+  - name: Add Admin User to Developer All Group
+    include_tasks: add_az_user_ad_group_member.yml
+    vars:
+      azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      user_emailId: "naresh@rgtechlabsoutlook.onmicrosoft.com"
+      tenant_id: "{{tenant_id}}" 
+  
+  # Create SVC Service Account in Azure AD users
+  - name: Create Service Account 
+    include_tasks: create_az_ad_serviceaccount.yml
+    vars:
+      svcname: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environment }}"
+      tenant_id: "{{tenant_id}}" 
+
+  - name: Add Service Account to Developers Group
+    include_tasks: add_az_user_ad_group_member.yml
+    vars:
+      azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environmentfullname }}"
+      tenant_id: "{{tenant_id}}" 
+
+###################### ONLY AFTER EVERYTHING RUNS IN THE DATAOPS SIDE CAR REPO ###########################
+
+  # - name: Add Managed Identity of DataFactory to Developers group
+  #   include_tasks: Add_managedIdentity_az_ad_group.yml
+  #   vars:
+  #     managedId_name: "B{{EnvironmentValid}}AZE1I{{ app_display_name}}DF01"
+  #     azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+
+  # - name: Add Managed Identity of logic App to Developers group
+  #   include_tasks: Add_managedIdentity_az_ad_group.yml
+  #   vars:
+  #     managedId_name: "B{{EnvironmentValid}}AZE1I{{ app_display_name}}LA01"
+  #     azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"

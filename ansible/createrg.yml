@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  connection: local
+  collections:
+    - azure.azcollections
+  tasks:
+    - name: create Resource Group here
+      azure_rm_resourcegroup:
+        name: "{{ rgname }}"  
+        location: "eastus"
+        tenant: "672dc7d6-254a-480d-91ea-652e1b245be8"
+        client_id: "82e430b4-87dc-4c42-a14c-48fd96d26d0d"
+        subscription_id: "c5bfcc97-a1d3-475f-a4dc-d261e49db4e6"
+        secret: "exS8Q~yJ1ChsMqf6BEXZB5WKaah2aKrtV.l7rc_x"
+      register: resourcegroupcreation
+
+    - name: Show the resourcegroup created
+      debug:
+        msg: "{{ resourcegroupcreation }}"

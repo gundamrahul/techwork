@@ -1,0 +1,41 @@
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - azure.azcollection
+  vars:
+    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+    azure_client_id: "{{ lookup('env','AZURE_CLIENT_ID') }}"
+    azure_secret: "{{ lookup('env','AZURE_CLIENT_SECRET') }}"
+    tenant_id: "{{tenant_id}}"
+    azgroupName: "{{ azgroupname}}"
+    memberGroupName: "{{memberGroupName}}"
+
+  tasks:
+  - name: Search Az Group {{ memberGroupName }} details
+    azure.azcollection.azure_rm_adgroup_info:
+      attribute_name: "displayName"
+      attribute_value: "{{ memberGroupName }}"
+      tenant: "{{ tenant_id }}"
+    register: azgroup_result
+
+  # Get Membergroup objectId
+  - name: Memeber Group Details {{ azgroup_result }}
+    debug: msg="{{ azgroup_result | json_query(jmesquery) }}"
+    vars:
+     jmesquery: "ad_groups[*].object_id"
+    register: memberGroupobjectid_result
+
+  # - debug: msg="{{memberGroupobjectid_result.msg[0]}}"
+
+  - name: Adding group - {{ memberGroupName }} as a memeber to Group -  {{ azgroupName }}
+    azure_rm_adgroup:
+      tenant: "{{ tenant_id }}"
+      display_name: "{{ azgroupName }}"
+      mail_nickname: "{{ azgroupName }}"
+      state: 'present'
+      present_members:
+        - "https://graph.windows.net/{{tenant_id}}/directoryObjects/{{memberGroupobjectid_result.msg[0]}}"
+    register: azgroup_result
+
+  - debug: msg="{{azgroup_result}}"

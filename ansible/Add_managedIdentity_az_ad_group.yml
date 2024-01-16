@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - azure.azcollection
+  vars:
+    azure_subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+    azure_client_id: "{{ lookup('env','AZURE_CLIENT_ID') }}"
+    azure_secret: "{{ lookup('env','AZURE_CLIENT_SECRET') }}"
+    tenant_id: df49ebf2-2fd2-44c2-80f8-37058cc147b9
+    resourcegroupName: BDAZE1IOMMLRG01
+    managedId_name: "{{managedId_name }}"
+    azgroupName: "{{ azgroupName }}"
+  tasks:
+  - name: Using user_principal_name
+    azure_rm_resource_info:
+      resource_group: "{{ resourcegroupName }}"
+      resource_type: resources
+      # resource_type:
+      # resource_name: "BDAZE1IOMMLDF01"
+    register: sp_result
+
+  - debug: msg="{{sp_result | json_query(jmesquery) }}"
+    vars:
+      jmesquery: "response[?contains(name,'{{ managedId_name }}')].identity.principalId"
+    register: managedidresult
+
+  - debug: msg="{{managedidresult.msg[0]}}"
+
+  - name: Adding ManagedIdentity - {{ managedId_name }} as a memeber to Group -  {{ azgroupName }}
+    azure_rm_adgroup:
+      tenant: "{{ tenant_id }}"
+      display_name: "{{ azgroupName }}"
+      mail_nickname: "{{ azgroupName }}"
+      state: 'present'
+      present_members:
+        - "{{ managedidresult.msg[0] }}"
+    register: azgroup_result
+
+  - debug: msg="{{azgroup_result}}"      
