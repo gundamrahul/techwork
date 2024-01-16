@@ -6,13 +6,14 @@
   #   tenant_id: "{{tenant_id}}"
   #   AllAdmingroupcreate: "{{ AllAdmingroupcreate }}"
 
-  tasks:
-    - name: Creating Azure AD Security Group {{ AllAdmingroupcreate }}
-      azure.azcollection.azure_rm_adgroup:
-        tenant: "{{tenant_id}}"
-        display_name: "{{ AllAdmingroupcreate }}"
-        mail_nickname: "{{ AllAdmingroupcreate }}"
-        state: 'present'
-      register: AllAdmingroupcreate_result
+  # tasks:
 
-    - debug: msg="{{ AllAdmingroupcreate_result }}"
+- name: Creating Azure AD Security Group {{ AllAdmingroupcreate }}
+  azure.azcollection.azure_rm_adgroup:
+    tenant: "{{tenant_id}}"
+    display_name: "{{ AllAdmingroupcreate }}"
+    mail_nickname: "{{ AllAdmingroupcreate }}"
+    state: 'present'
+  register: AllAdmingroupcreate_result
+
+- debug: msg="{{ AllAdmingroupcreate_result }}"
