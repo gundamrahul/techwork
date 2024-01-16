@@ -2,9 +2,9 @@
 #   connection: local
 #   collections:
 #     - azure.azcollection
-  vars:
-    tenant_id: "{{tenant_id}}"
-    AllAdmingroupcreate: "{{ AllAdmingroupcreate }}"
+  # vars:
+  #   tenant_id: "{{tenant_id}}"
+  #   AllAdmingroupcreate: "{{ AllAdmingroupcreate }}"
 
   tasks:
     - name: Creating Azure AD Security Group {{ AllAdmingroupcreate }}
