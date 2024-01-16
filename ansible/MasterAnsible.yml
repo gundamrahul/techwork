@@ -47,28 +47,28 @@
     include_tasks: create_az_ad_group.yml
     vars:
       AllAdmingroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
-      tenant_id: "{{tenant_id}}"
+      tenant_id: "{{ tenant_id }}" 
 
     # Create Developer All Group
   - name: Create the AZ Developers group All 
     include_tasks: create_az_ad_group.yml
     vars:
       AllDevelopersgroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
-      tenant_id: "{{tenant_id}}"
+      tenant_id: "{{ tenant_id }}"
 
     # Create Environment Admin Group
   - name: Creating the AD group-  Environment Admin.
     include_tasks: create_az_ad_group.yml
     vars:
       AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
-      tenant_id: "{{tenant_id}}"  
+      tenant_id: "{{ tenant_id }}"  
 
     # Create Environment Developer Group
   - name: Creating the AD group-  Environment Developers.
     include_tasks: create_az_ad_group.yml
     vars:
       AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
-      tenant_id: "{{tenant_id}}"           
+      tenant_id: "{{ tenant_id }}"           
 
   # Add  Admin All Group to Environment Admin Group
   - name: add All group to specific Environment group admins
@@ -76,7 +76,7 @@
     vars:
       azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
       memberGroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}"  
 
   # Add  Admin All Group to Environment Developers Group
   - name: add All group to specific Environment group Developers
@@ -84,7 +84,7 @@
     vars:
       azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
       memberGroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}"  
 
   # Add Admin User to Environment Admin Group
   - name: Add Admin User to Admin All Group
@@ -92,7 +92,7 @@
     vars:
       azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
       user_emailId: "harish@rgtechlabsoutlook.onmicrosoft.com"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}" 
 
   # Add Developer User to Environment Developer Group
   - name: Add Admin User to Developer All Group
@@ -100,21 +100,21 @@
     vars:
       azgroupName: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
       user_emailId: "naresh@rgtechlabsoutlook.onmicrosoft.com"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}" 
   
   # Create SVC Service Account in Azure AD users
   - name: Create Service Account 
     include_tasks: create_az_ad_serviceaccount.yml
     vars:
       svcname: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environment }}"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}"  
 
   - name: Add Service Account to Developers Group
     include_tasks: add_az_user_ad_group_member.yml
     vars:
       azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
       user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environmentfullname }}"
-      tenant_id: "{{tenant_id}}" 
+      tenant_id: "{{ tenant_id }}" 
 
 ###################### ONLY AFTER EVERYTHING RUNS IN THE DATAOPS SIDE CAR REPO ###########################
 
