@@ -16,7 +16,7 @@
   azure.azcollection.azure_rm_adgroup_info:
     attribute_name: "displayName"
     attribute_value: "{{ memberGroupName }}"
-    tenant: "{{ tenant_id }}"
+    tenant: "df49ebf2-2fd2-44c2-80f8-37058cc147b9"
   register: azgroup_result
 
 # Get Membergroup objectId
@@ -30,12 +30,12 @@
 
 - name: Adding group - {{ memberGroupName }} as a memeber to Group -  {{ azgroupName }}
   azure_rm_adgroup:
-    tenant: "{{ tenant_id }}"
+    tenant: "df49ebf2-2fd2-44c2-80f8-37058cc147b9"
     display_name: "{{ azgroupName }}"
     mail_nickname: "{{ azgroupName }}"
     state: 'present'
     present_members:
-      - "https://graph.windows.net/{{tenant_id}}/directoryObjects/{{memberGroupobjectid_result.msg[0]}}"
+      - "https://graph.windows.net/df49ebf2-2fd2-44c2-80f8-37058cc147b9/directoryObjects/{{memberGroupobjectid_result.msg[0]}}"
   register: azgroup_result
 
 - debug: msg="{{azgroup_result}}"

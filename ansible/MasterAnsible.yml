@@ -53,21 +53,21 @@
   - name: Create the AZ Developers group All 
     include_tasks: create_az_ad_group.yml
     vars:
-      AllDevelopersgroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      AllAdmingroupcreate: "AD-SEC-All-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
       tenant_id: "{{ tenant_id }}"
 
     # Create Environment Admin Group
   - name: Creating the AD group-  Environment Admin.
     include_tasks: create_az_ad_group.yml
     vars:
-      AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
+      AllAdmingroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Admins"
       tenant_id: "{{ tenant_id }}"  
 
     # Create Environment Developer Group
   - name: Creating the AD group-  Environment Developers.
     include_tasks: create_az_ad_group.yml
     vars:
-      AllDevelopersgroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
+      AllAdmingroupcreate: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
       tenant_id: "{{ tenant_id }}"           
 
   # Add  Admin All Group to Environment Admin Group
@@ -113,7 +113,7 @@
     include_tasks: add_az_user_ad_group_member.yml
     vars:
       azgroupName: "AD-SEC-{{ Environmentfullname }}-{{ FunctionalArea }}-{{ app_display_name }}-Developers"
-      user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environmentfullname }}"
+      user_emailId: "SVC-{{ app_display_name }}-{{dataproduct}}-{{ Environmentfullname }}@rgtechlabsoutlook.onmicrosoft.com"
       tenant_id: "{{ tenant_id }}" 
 
 ###################### ONLY AFTER EVERYTHING RUNS IN THE DATAOPS SIDE CAR REPO ###########################
